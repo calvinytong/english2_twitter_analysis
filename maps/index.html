@@ -25,6 +25,8 @@
   // initialize the map
   var map = L.map('map');
 
+  //use jquery to get the  data from the json files, changing the file here
+  //will change which data we are graphing
   $.getJSON("./filtered_geo_data.json", function(data) {
     var myStyle = {
         radius: 2,
