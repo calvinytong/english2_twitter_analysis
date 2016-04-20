@@ -1,0 +1,5 @@
+/data
+*.json
+/twitter
+/maps/*.json
+/.ipynb_checkpoints
