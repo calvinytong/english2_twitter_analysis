@@ -4,8 +4,11 @@ import json
 from collections import Counter
 import csv
 import random
+import matplotlib.pyplot as plt
 
 #vector helpers
+#note this code is adapted from Joel Grus's Excellent Data Science from scratch
+#https://github.com/joelgrus/data-science-from-scratch
 
 def vector_add(v,w):
     return[v_i + w_i for v_i, w_i in zip(v,w)]
@@ -35,7 +38,7 @@ def sum_of_squares(v):
 def squared_distance(v,w):
     return sum_of_squares(vector_subtract(v,w))
 
-class KMeans:
+class KMeans(object):
     """performs k-means clustering"""
 
     def __init__(self, k):
@@ -70,6 +73,26 @@ class KMeans:
                     self.means[i] = vector_mean(i_points)
 
 
+def squared_clustering_errors(inputs, k):
+    """finds the total squared error from k-means clustering the inputs"""
+    clusterer = KMeans(k)
+    clusterer.train(inputs)
+    means = clusterer.means
+    assignments = list(map(clusterer.classify, inputs))
+
+    return sum(squared_distance(input,means[cluster])
+               for input, cluster in zip(inputs, assignments))
+
+def plot_squared_clustering_errors(inputs):
+
+    ks = range(1, len(inputs) + 1)
+    errors = [squared_clustering_errors(inputs, k) for k in ks]
+
+    plt.plot(ks, errors)
+    plt.xticks(ks)
+    plt.xlabel("k")
+    plt.ylabel("total squared error")
+    plt.show()
 
 def rms(data, x_mean, y_mean, count):
     """
@@ -111,7 +134,7 @@ def main():
     y_sum = 0
     #pull out the first 10000 tweets, note this is easy to change, but speed and space
     #concerns make this limited. I think that doing a random sample would be better
-    for x in range(0,10000):
+    for x in range(0,100):
         try:
             dd = pkl.load(f)
         except EOFError:
@@ -191,9 +214,10 @@ def main():
     for d in data_array:
         inputs.append(d['coordinates'])
 
-    cluster = KMeans(5)
-    cluster.train(inputs)
-    print(cluster.means)
+    plot_squared_clustering_errors(inputs)
+    # cluster = KMeans(5)
+    # cluster.train(inputs)
+    # print(cluster.means)
 
 if __name__ == '__main__':
     main()
