@@ -1,6 +1,75 @@
 import pickle as pkl
 import numpy as np
 import json
+from collections import Counter
+import csv
+import random
+
+#vector helpers
+
+def vector_add(v,w):
+    return[v_i + w_i for v_i, w_i in zip(v,w)]
+
+def vector_sum(vectors):
+    result = vectors[0]
+    for vector in vectors[1:]:
+        result = vector_add(result, vector)
+    return result
+
+def vector_subtract(v, w):
+    return [v_i - w_i for v_i, w_i in zip(v,w)]
+
+def scalar_multiply(c, v):
+    return[c * v_i for v_i in v]
+
+def vector_mean(vectors):
+    n = len(vectors)
+    return scalar_multiply(1/n, vector_sum(vectors))
+
+def dot(v, w):
+    return sum(v_i * w_i for v_i, w_i in zip(v,w))
+
+def sum_of_squares(v):
+    return dot(v,v)
+
+def squared_distance(v,w):
+    return sum_of_squares(vector_subtract(v,w))
+
+class KMeans:
+    """performs k-means clustering"""
+
+    def __init__(self, k):
+        self.k = k          # number of clusters
+        self.means = None   # means of clusters
+
+    def classify(self, input):
+        """return the index of the cluster closest to the input"""
+        return min(range(self.k),
+                   key=lambda i: squared_distance(input, self.means[i]))
+
+    def train(self, inputs):
+
+        self.means = random.sample(inputs, self.k)
+        assignments = None
+
+        while True:
+            # Find new assignments
+            new_assignments = list(map(self.classify, inputs))
+
+            # If no assignments have changed, we're done.
+            if assignments == new_assignments:
+                return
+
+            # Otherwise keep the new assignments,
+            assignments = new_assignments
+
+            for i in range(self.k):
+                i_points = [p for p, a in zip(inputs, assignments) if a == i]
+                # avoid divide-by-zero if i_points is empty
+                if i_points:
+                    self.means[i] = vector_mean(i_points)
+
+
 
 def rms(data, x_mean, y_mean, count):
     """
@@ -23,9 +92,17 @@ def rms(data, x_mean, y_mean, count):
         s += (x_coor - x_mean)**2 + (y_coor - y_mean)**2
     return (s / count)**0.5
 
-
+def get_stop_words():
+    stop_word_set = None
+    with open('stopwords.csv', 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            stop_word_set = set(row)
+    if stop_word_set:
+        return stop_word_set
 
 def main():
+    stop_word_set = get_stop_words()
     f = open('/Users/calvin/Documents/Lehigh/English/Research/data/cap1.pkl', 'rb')
     unpickler = pkl.Unpickler(f)
     data_array = []
@@ -34,7 +111,7 @@ def main():
     y_sum = 0
     #pull out the first 10000 tweets, note this is easy to change, but speed and space
     #concerns make this limited. I think that doing a random sample would be better
-    for x in range(0,100000):
+    for x in range(0,10000):
         try:
             dd = pkl.load(f)
         except EOFError:
@@ -74,31 +151,49 @@ def main():
     #take the mean of the x coordinates and y coordinates
     x_mean = x_sum / count
     y_mean = y_sum / count
-
+    text_list = []
     print(rms(data_array,x_mean,y_mean,count))
+    for d in data_array:
+        tok = d['text'].split()
+        for w in tok:
+            l = w.lower()
+            if l in stop_word_set:
+                continue
+            text_list.append(l)
+
+
+    counts = Counter(text_list)
+    print(counts.most_common(15))
 
     #initialize geo_data json (just a dict here) to feed in to the maps
     geo_data = {
         "type": "FeatureCollection",
         "features": []
     }
+    #
+    # #populate the json file
+    # for d in data_array:
+    #     geo_json_feature = {
+    #             "type": "Feature",
+    #             "geometry": d['coordinates'],
+    #             "properties": {
+    #                 "text": d['text'],
+    #                 "created_at": d['created_at']
+    #             }
+    #         }
+    #     geo_data['features'].append(geo_json_feature)
+    #
+    # #write the json out to a file
+    # with open('geo_data.json', 'w') as fout:
+    #     fout.write(json.dumps(geo_data, indent=4))
 
-    #populate the json file
+    inputs = []
     for d in data_array:
-        geo_json_feature = {
-                "type": "Feature",
-                "geometry": d['coordinates'],
-                "properties": {
-                    "text": d['text'],
-                    "created_at": d['created_at']
-                }
-            }
-        geo_data['features'].append(geo_json_feature)
+        inputs.append(d['coordinates'])
 
-    #write the json out to a file
-    with open('geo_data.json', 'w') as fout:
-        fout.write(json.dumps(geo_data, indent=4))
-
+    cluster = KMeans(5)
+    cluster.train(inputs)
+    print(cluster.means)
 
 if __name__ == '__main__':
     main()
