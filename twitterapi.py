@@ -45,7 +45,7 @@ def main():
 
     while True:  #Endless loop: personalize to suit your own purposes
         try:
-            stream.statuses.filter(locations ='-124.88,25.13,-66.09,49.1')
+            stream.statuses.filter(locations ='-124.88,25.13,-66.09,49.1',track=['hillary'])
         except:
             #e = sys.exc_info()[0]  #Get exception info (optional)
             #print 'ERROR:',e  #Print exception info (optional)

@@ -5,6 +5,7 @@ from collections import Counter
 import csv
 import random
 import matplotlib.pyplot as plt
+# from nltk.twitter import Query, Streamer, Twitter, TweetViewer, TweetWriter, credsfromfile
 
 #vector helpers
 #note this code is adapted from Joel Grus's Excellent Data Science from scratch
@@ -85,7 +86,7 @@ def squared_clustering_errors(inputs, k):
 
 def plot_squared_clustering_errors(inputs):
 
-    ks = range(1, len(inputs) + 1)
+    ks = range(1, 20)
     errors = [squared_clustering_errors(inputs, k) for k in ks]
 
     plt.plot(ks, errors)
@@ -124,6 +125,30 @@ def get_stop_words():
     if stop_word_set:
         return stop_word_set
 
+def to_json(data_array):
+        # #initialize geo_data json (just a dict here) to feed in to the maps
+        geo_data = {
+            "type": "FeatureCollection",
+            "features": []
+        }
+
+        #populate the json file
+        for d in data_array:
+            geo_json_feature = {
+                    "type": "Feature",
+                    "geometry": {"type" : "Point", "coordinates" : d['coordinates']},
+                    "properties": {
+                        "text": d['text'],
+                        "created_at": d['created_at']
+                    }
+                }
+            geo_data['features'].append(geo_json_feature)
+
+        #write the json out to a file
+        with open('geo_data.json', 'w') as fout:
+            fout.write(json.dumps(geo_data, indent=4))
+
+
 def main():
     stop_word_set = get_stop_words()
     f = open('/Users/calvin/Documents/Lehigh/English/Research/data/cap1.pkl', 'rb')
@@ -134,7 +159,7 @@ def main():
     y_sum = 0
     #pull out the first 10000 tweets, note this is easy to change, but speed and space
     #concerns make this limited. I think that doing a random sample would be better
-    for x in range(0,100):
+    for x in range(0,100000):
         try:
             dd = pkl.load(f)
         except EOFError:
@@ -148,6 +173,8 @@ def main():
             #right now we just take the first coordinate in the bounding box as the actual
             #we could average to find the middle, but this seems good enough for now
             if dd['coordinates'] == None:
+                if dd['place'] == None:
+                    continue
                 dd['coordinates'] = dd['place']['bounding_box']['coordinates'][0][0]
             else:
                 #account for edge case where coordinates are wrapped
@@ -172,52 +199,39 @@ def main():
             # y2 =
 
     #take the mean of the x coordinates and y coordinates
-    x_mean = x_sum / count
-    y_mean = y_sum / count
-    text_list = []
-    print(rms(data_array,x_mean,y_mean,count))
-    for d in data_array:
-        tok = d['text'].split()
-        for w in tok:
-            l = w.lower()
-            if l in stop_word_set:
-                continue
-            text_list.append(l)
-
-
-    counts = Counter(text_list)
-    print(counts.most_common(15))
-
-    #initialize geo_data json (just a dict here) to feed in to the maps
-    geo_data = {
-        "type": "FeatureCollection",
-        "features": []
-    }
-    #
-    # #populate the json file
+    # x_mean = x_sum / count
+    # y_mean = y_sum / count
+    # text_list = []
+    # print(rms(data_array,x_mean,y_mean,count))
     # for d in data_array:
-    #     geo_json_feature = {
-    #             "type": "Feature",
-    #             "geometry": d['coordinates'],
-    #             "properties": {
-    #                 "text": d['text'],
-    #                 "created_at": d['created_at']
-    #             }
-    #         }
-    #     geo_data['features'].append(geo_json_feature)
+    #     tok = d['text'].split()
+    #     for w in tok:
+    #         l = w.lower()
+    #         if l in stop_word_set:
+    #             continue
+    #         text_list.append(l)
     #
-    # #write the json out to a file
-    # with open('geo_data.json', 'w') as fout:
-    #     fout.write(json.dumps(geo_data, indent=4))
+    #
+    # counts = Counter(text_list)
+    # print(counts.most_common(15))
 
     inputs = []
     for d in data_array:
         inputs.append(d['coordinates'])
 
     plot_squared_clustering_errors(inputs)
-    # cluster = KMeans(5)
-    # cluster.train(inputs)
-    # print(cluster.means)
+    cluster = KMeans(20)
+    cluster.train(inputs)
+    print(cluster.means)
+    #
+    # cluster_data = []
+    # for d in data_array:
+    #     if cluster.classify(d['coordinates']) == 0:
+    #         cluster_data.append(d)
+    # print(len(cluster_data))
+    #
+    # to_json(cluster_data)
+
 
 if __name__ == '__main__':
     main()
