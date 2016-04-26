@@ -7,12 +7,6 @@ from time import gmtime, strftime
 import datetime
 import pytz
 
-# Variables that contains the user credentials to access Twitter API
-ACCESS_TOKEN = "3002655854-ZMTmg2RlZH2x92RApVyIMg2fQFgwvEJBCUXmy7X"
-ACCESS_SECRET = "kS1cODyAf8nfTkMbbrDY1YNhIXGrYl5MsvP2aoJ7lKbzD"
-CONSUMER_KEY = "LnKZ50b6p3EaGZc5fcxdcyNEr"
-CONSUMER_SECRET = "8BKDn8KzLqwFxUb3b7JPCKbZgF8bVMjIGl3Tl0axCt07MZ3oYR"
-
 class Streamer(TwythonStreamer):
 
     def __init__(self, filename, con_key, con_sec, acc_tok, acc_sec):
@@ -36,11 +30,21 @@ class Streamer(TwythonStreamer):
         print(status_code, data)
         self.disconnect()
 
+def load_keys():
+    keys = []
+    path = os.path.join('.keys')
+    f = open(path, 'r')
+    for line in f:
+        keys.append(str(line))
+    return keys
+
+
 def main():
 
     fmt = ' %H:%M:%S_%Y-%m-%d'
     d = datetime.datetime.now(pytz.timezone("America/New_York")).strftime(fmt)
-    stream = Streamer(d,CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_SECRET)
+    keys = load_keys()
+    stream = Streamer(d,keys[0], keys[1], keys[2], keys[3])
     #this only returns geo tagged tweets in the USA
 
     while True:  #Endless loop: personalize to suit your own purposes
