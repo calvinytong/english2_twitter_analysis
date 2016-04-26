@@ -5,22 +5,27 @@ This repo holds the twitter analysis code for an english 2 research paper
 
 The directory holding the html for mapping using leaflet.js
 
-maps/ 
+`maps/` 
 
 The git ignorefile which keeps large data files out of the repo
-.gitignore
+
+`.gitignore`
 
 The python notebook holding all of the analysis code
-Analysis.ipynb
+
+`Analysis.ipynb`
 
 The python script for non notebook analysis
-Analysis.py
+
+`Analysis.py`
 
 The python script for getting tweets from the twitter api
-twitterapi.py
+
+`twitterapi.py`
 
 A python script for doing unit tests for the vector methods
-vector_test.py
+
+`vector_test.py`
 
 
 
