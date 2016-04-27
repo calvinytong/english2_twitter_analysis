@@ -35,7 +35,7 @@ def load_keys():
     path = os.path.join('.keys')
     f = open(path, 'r')
     for line in f:
-        keys.append(str(line))
+        keys.append(str(line).replace('\n',''))
     return keys
 
 
