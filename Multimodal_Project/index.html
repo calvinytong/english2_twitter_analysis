@@ -37,10 +37,17 @@
 
   for (var i = 0; i < cities.length; i++) {
     var marker = L.marker(cities[i]);
+    var customPopup = '<img src="sf.png" alt="sf" style="width:608px;height:456px;">';
+
+    // specify popup options
+    var customOptions = {
+        'maxWidth': '1000'
+      };
+    marker.bindPopup(customPopup,customOptions);
     markers.addLayer(marker);
     //Do something
   }
-  map.addLayer(markers)
+  map.addLayer(markers);
   map.addLayer(mytiles).setView(new L.LatLng(40.178873 ,  -100.195312), 4);
 
   function onMapClick(e) {
