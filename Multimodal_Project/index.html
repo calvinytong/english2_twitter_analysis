@@ -66,12 +66,14 @@
   map.addLayer(markers);
   map.addLayer(mytiles).setView(new L.LatLng(40.178873 ,  -100.195312), 4);
 
-  function onMapClick(e) {
-    alert("You clicked the map at " + e.latlng);
-  }
-
-
-  map.on('click', onMapClick);
+  // 
+  // map.addControl(new MyControl());
+  // function onMapClick(e) {
+  //   alert("You clicked the map at " + e.latlng);
+  // }
+  //
+  //
+  // map.on('click', onMapClick);
 
 
   </script>
