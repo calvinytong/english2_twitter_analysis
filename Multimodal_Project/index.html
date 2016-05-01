@@ -25,6 +25,21 @@
   var atlanta = [33.78143, -84.41895];
 
   var cities = [nyc, la, sf, ch, tamp, dallas, phoenix, seattle, denver,atlanta, dc];
+
+  var graphs = [
+    '<iframe width="800" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~calvinytong/4.embed?share_key=ltX55jMWTPRR6TRLvKZHbz"></iframe>',
+    '<iframe width="800" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~calvinytong/10.embed"></iframe>',
+    '<iframe width="800" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~calvinytong/7.embed"></iframe>',
+    '<iframe width="800" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~calvinytong/15.embed"></iframe>',
+    '<iframe width="800" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~calvinytong/18.embed"></iframe>',
+    '<iframe width="800" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~calvinytong/21.embed"></iframe>',
+    '<iframe width="800" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~calvinytong/26.embed"></iframe>',
+    '<iframe width="800" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~calvinytong/29.embed"></iframe>',
+    '<iframe width="800" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~calvinytong/32.embed"></iframe>',
+    '<iframe width="800" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~calvinytong/37.embed"></iframe>',
+    '<iframe width="800" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~calvinytong/40.embed"></iframe>'
+    ];
+
   // Load the tile images from OpenStreetMap
   var mytiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -37,7 +52,8 @@
 
   for (var i = 0; i < cities.length; i++) {
     var marker = L.marker(cities[i]);
-    var customPopup = '<img src="sf.png" alt="sf" style="width:987px;height:503px;">';
+    // var customPopup = '<img src="sf.png" alt="sf" style="width:987px;height:503px;">';
+    var customPopup = graphs[i];
 
     // specify popup options
     var customOptions = {
