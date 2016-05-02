@@ -130,7 +130,6 @@ class AlchemyAPI:
     ENDPOINTS['taxonomy']['url'] = '/url/URLGetRankedTaxonomy'
     ENDPOINTS['taxonomy']['html'] = '/html/HTMLGetRankedTaxonomy'
     ENDPOINTS['taxonomy']['text'] = '/text/TextGetRankedTaxonomy'
-    ENDPOINTS['emotion']['text'] = '/text/TextGetEmotion'
 
     # The base URL for all endpoints
     BASE_URL = 'http://access.alchemyapi.com/calls'
@@ -420,12 +419,12 @@ class AlchemyAPI:
         """
 
         # Make sure this request supports this flavor
-        if flavor not in AlchemyAPI.ENDPOINTS['emotion']:
+        if flavor not in AlchemyAPI.ENDPOINTS['language']:
             return {'status': 'ERROR', 'statusInfo': 'language detection for ' + flavor + ' not available'}
 
         # add the data to the options and analyze
         options[flavor] = data
-        return self.__analyze(AlchemyAPI.ENDPOINTS['emotion'][flavor], {}, options)
+        return self.__analyze(AlchemyAPI.ENDPOINTS['language'][flavor], {}, options)
 
     def title(self, flavor, data, options={}):
         """
