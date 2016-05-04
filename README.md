@@ -26,3 +26,7 @@ The python script for getting tweets from the twitter api
 `vector_test.py`
 
 A python script for doing unit tests for the vector methods
+
+`Multimodal_Project/`
+
+The directory holding the map (index.html), and the notebook exported as an html file
