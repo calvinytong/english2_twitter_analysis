@@ -1,5 +1,5 @@
 # english_twitter_research
-This repo holds the twitter analysis code for an english 2 research paper
+This repo holds the twitter analysis code for an english 2 research paper. I attempt to detect collective narrowing of attention due to location based collaborative filtering.
 
 ##Repo Contents
 
